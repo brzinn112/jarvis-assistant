@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JARVIS</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #050b14;
+      color: #00d9ff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .container {
+      padding: 50px 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      letter-spacing: 8px;
+    }
+
+    #status {
+      margin: 30px 0;
+      color: white;
+    }
+
+    button {
+      background: #00d9ff;
+      color: #001018;
+      border: none;
+      border-radius: 50px;
+      padding: 18px 35px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #response {
+      margin: 30px auto;
+      max-width: 600px;
+      font-size: 20px;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>JARVIS</h1>
+
+    <div id="status">Sistema aguardando...</div>
+
+    <button onclick="ouvir()">🎙️ Falar com JARVIS</button>
+
+    <div id="response"></div>
+  </div>
+
+  <script>
+    const status = document.getElementById("status");
+    const response = document.getElementById("response");
+
+    function falar(texto) {
+      const voz = new SpeechSynthesisUtterance(texto);
+      voz.lang = "pt-BR";
+      voz.rate = 1;
+      speechSynthesis.speak(voz);
+    }
+
+    function ouvir() {
+      const Reconhecimento =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+      if (!Reconhecimento) {
+        response.innerText =
+          "Seu navegador não suporta reconhecimento de voz.";
+        return;
+      }
+
+      const reconhecimento = new Reconhecimento();
+
+      reconhecimento.lang = "pt-BR";
+      reconhecimento.interimResults = false;
+
+      status.innerText = "🎙️ Ouvindo...";
+
+      reconhecimento.start();
+
+      reconhecimento.onresult = function(event) {
+        const texto = event.results[0][0].transcript;
+
+        status.innerText = "Processando...";
+        response.innerText = "Você disse: " + texto;
+
+        responder(texto);
+      };
+
+      reconhecimento.onerror = function() {
+        status.innerText = "Erro no reconhecimento de voz.";
+      };
+    }
+
+    function responder(texto) {
+      texto = texto.toLowerCase();
+
+      let resposta;
+
+      if (texto.includes("olá") || texto.includes("oi")) {
+        resposta = "Olá. Eu sou JARVIS. Como posso ajudar?";
+      } 
+      else if (texto.includes("seu nome")) {
+        resposta = "Meu nome é JARVIS.";
+      } 
+      else if (texto.includes("hora")) {
+        resposta = "Agora você pode consultar o horário no seu dispositivo.";
+      } 
+      else {
+        resposta =
+          "Ainda estou aprendendo. Em breve poderei fazer muito mais.";
+      }
+
+      response.innerText = resposta;
+      status.innerText = "Sistema online.";
+
+      falar(resposta);
+    }
+  </script>
+
+</body>
+</html>
